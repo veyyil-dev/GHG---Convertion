@@ -1,0 +1,15 @@
+/* custom-checkbox.css */
+.ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #31CE95 !important;
+    border-color: #31CE95 !important;
+}
+
+/* Optional: Change the hover effect */
+.ant-checkbox-wrapper:hover .ant-checkbox-inner {
+    border-color: #31CE95 !important;
+}
+
+/* Optional: Change the focus effect */
+.ant-checkbox-input:focus + .ant-checkbox-inner {
+    border-color: #31CE95 !important;
+}

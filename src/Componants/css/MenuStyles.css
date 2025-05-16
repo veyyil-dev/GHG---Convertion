@@ -1,0 +1,33 @@
+/* Custom styles for Ant Design Menu */
+.custom-menu .ant-menu {
+    background-color: #f9fafb; /* Light gray background */
+    border-right: none; /* Remove default border */
+  }
+  
+  .custom-menu .ant-menu-item {
+    margin: 8px 0; /* Add spacing between menu items */
+    padding: 12px 16px !important; /* Increase padding for better click area */
+    border-radius: 8px; /* Rounded corners */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+  }
+  
+  .custom-menu .ant-menu-item:hover {
+    background-color: #e0e7ff !important; /* Light blue hover background */
+    color: #3b82f6 !important; /* Blue text on hover */
+  }
+  
+  .custom-menu .ant-menu-item-selected {
+    background-color: #3b82f6 !important; /* Blue background for selected item */
+    color: #ffffff !important; /* White text for selected item */
+  }
+  
+  .custom-menu .ant-menu-item-icon {
+    font-size: 16px; /* Increase icon size */
+    color: inherit; /* Inherit text color */
+  }
+  
+  .custom-menu .ant-menu-title-content {
+    font-weight: 500; /* Medium font weight for menu text */
+  }
+
+  
