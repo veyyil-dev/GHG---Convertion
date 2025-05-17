@@ -114,8 +114,8 @@ export default function ScopeOneFactors() {
         </div>
       )}
 
-      {pageChange === 1 && <Chooseactivities />}
-      {pageChange === 2 && <Parameters />}
+      {pageChange === 10 && <Chooseactivities />}
+      {pageChange === 1 && <Parameters />}
     </>
   );
 }

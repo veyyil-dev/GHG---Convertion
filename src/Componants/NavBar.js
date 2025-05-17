@@ -136,9 +136,7 @@ export default function NavBar ()  {
         width={250}
       >
         <Menu mode="inline" className="custom-menu">
-          <Menu.Item icon={<UserOutlined />}>
-            <Link href="/Userprofile">Profile</Link>
-          </Menu.Item>
+       
 
           {pathname !== "/dashboard" && roles !== "DataEntry" && (
             <Menu.Item icon={<DashboardOutlined />}>
