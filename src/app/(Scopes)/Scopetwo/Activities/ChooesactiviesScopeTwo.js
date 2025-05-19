@@ -13,6 +13,8 @@ export default function ChooesactiviesScopeTwo() {
 
   console.log("selectedValuesScopeTwo", selectedValuesScopeTwo)
 
+  
+
   // Create custom spinner icon
   const antIcon = (
     <LoadingOutlined

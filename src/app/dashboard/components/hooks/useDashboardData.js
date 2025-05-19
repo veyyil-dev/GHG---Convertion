@@ -1,15 +1,27 @@
 import { useState, useEffect, useCallback } from 'react';
-import dayjs from 'dayjs';
 
 const useDashboardData = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [userId, setUserId] = useState("");
 
+  // Fetch userId from localStorage once
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUserId = localStorage.getItem("username");
+      if (storedUserId) {
+        setUserId(storedUserId);
+      }
+    }
+  }, []);
+
+  // Fetch dashboard data only when userId is available
   const fetchDashboardData = useCallback(async () => {
+    if (!userId) return;
+
     setIsLoading(true);
-    // http://127.0.0.1:5000/api/dashboard/DashBoardData  --> new 
     try {
-      const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/api/DashBoardData", {
+      const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/api/DashBoardData?userId=${userId}`, {
         method: "GET",
       });
       if (!response.ok) {
@@ -33,11 +45,14 @@ const useDashboardData = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [userId]);
 
+  // Refetch when userId changes
   useEffect(() => {
-    fetchDashboardData();
-  }, [fetchDashboardData]);
+    if (userId) {
+      fetchDashboardData();
+    }
+  }, [userId, fetchDashboardData]);
 
   return { data, isLoading, refetch: fetchDashboardData };
 };

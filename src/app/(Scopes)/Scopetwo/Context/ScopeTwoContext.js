@@ -5,7 +5,9 @@ const ScopeTwoContext = createContext();
 
 export function ScopeTwoProvider({ children }) {
   const [checkedValuesScopeTwo, setCheckedValuesScopeTwo] = useState([]);
-  const [selectedValuesScopeTwo, setSelectedValuesScopeTwo] = useState({});
+  const [selectedValuesScopeTwo, setSelectedValuesScopeTwo] = useState({
+    "UK Electricity": ["Electricity generated"]
+  });
 
   return (
     <ScopeTwoContext.Provider

@@ -16,6 +16,16 @@ const DataTable = () => {
   const router = useRouter();
   const [loadings, setLoadings] = useState([]);
   const [SupervisiorName, setSupervisiorName] = useState(null);
+  const [userId, setUserId] = useState("");
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUserId = localStorage.getItem("username");
+      if (storedUserId) {
+        setUserId(storedUserId);
+      }
+    }
+  }, []);
+
 
   const getLocalStorageValue = (key) => {
     if (typeof window !== "undefined") {
@@ -44,7 +54,7 @@ const DataTable = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `https://ghg-conversion-factors-backend.vercel.app/api/DashBoardData`
+        `https://ghg-conversion-factors-backend.vercel.app/api/DashBoardData?userId=${userId}`
       );
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
@@ -80,7 +90,7 @@ const DataTable = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [userId]);
 
   const columns = [
     { title: "Username", dataIndex: "username", key: "username" },

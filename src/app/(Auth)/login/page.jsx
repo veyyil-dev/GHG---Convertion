@@ -124,9 +124,7 @@ export default function Login() {
               {/* Remember Me & Forgot Password */}
               <Form.Item>
                 <div className="flex justify-between items-center">
-                  <Checkbox className="text-green-500">
-                    <Text className="text-gray-600">Show Password</Text>
-                  </Checkbox>
+                
                   <Text className="text-green-500 cursor-pointer hover:underline">
                     Forgot Password?
                   </Text>

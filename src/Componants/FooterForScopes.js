@@ -181,7 +181,7 @@ export default function FooterForScopes({ pageChange, setPageChange, changeShope
             )}
 
             {/* Next Page in Scope 2 */}
-            {pageChange < 2 && (
+            {pageChange < 0 && (
               <Button
                 onClick={() => setPageChange(pageChange + 1)}
                 className="bg-[#27A376] text-white border border-green-500 
@@ -194,7 +194,7 @@ export default function FooterForScopes({ pageChange, setPageChange, changeShope
             )}
 
             {/* Go to Scope 3 */}
-            {pageChange === 2 && (
+            {pageChange === 0 &&  changeShope === 2 && (
               <Button
                 onClick={handleSubmit}
                 className="bg-[#27A376] text-white border border-green-500 

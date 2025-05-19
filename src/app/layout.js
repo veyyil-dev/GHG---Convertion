@@ -25,10 +25,9 @@ import Layout from "./Userprofile/components/layout/Layout";
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-      >
-        <ScopeOneProvider>
-          <ScopeTwoProvider>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <ScopeTwoProvider>
+          <ScopeOneProvider>
             <ScopeThreeProvider>
               
 
@@ -36,8 +35,8 @@ export default function RootLayout({ children }) {
             </ScopeThreeProvider>
 
 
-          </ScopeTwoProvider>
           </ScopeOneProvider>
+        </ScopeTwoProvider>
       </body>
     </html>
   );
