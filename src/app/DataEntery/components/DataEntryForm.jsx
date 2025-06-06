@@ -85,7 +85,7 @@ const DataEntryForm = ({ loading, navigating, handleFormSubmit, user_Id }) => {
           rules={[{ required: true, message: "Select unit" }]}
         >
           <Select>
-            {["tonnes", "litres", "kg",].map((unit) => (
+            {["pcs","kg","tonnes", "litres"].map((unit) => (
               <Option key={unit} value={unit}>{unit}</Option>
             ))}
           </Select>
