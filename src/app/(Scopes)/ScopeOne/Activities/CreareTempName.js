@@ -92,11 +92,11 @@ export default function CreateTempName() {
             onChange={handleUnitChange}
             onBlur={saveToLocalStorage}
           >
-            <option value="" disabled>Select Unit</option>
+            <option value="" disabled>Select Unit</option>          
+            <option value="pcs">Pcs</option>
+            <option value="kg">Kg</option>
             <option value="tonnes">Tonnes</option>
             <option value="litres">Litres</option>
-  
-            <option value="kg">Kg</option>
           </select>
         </div>
         

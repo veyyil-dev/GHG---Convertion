@@ -20,15 +20,42 @@ export default function ParametersForScopeTwo() {
 
 
   // Dummy data for parameters
+  // const dummyParameters = {
+  //   "Non Renewable Electricity": {
+  //     "Purchased Electricity": {
+  //       "Units Consumed": {
+  //         units: ["kWh"]
+  //       }
+  //     }
+  //   }
+  // };
+
   const dummyParameters = {
-    "UK Electricity": {
-      "Electricity generated": {
-        "CO2 Emission": {
-          units: ["kWh"]
-        }
+  "Non Renewable Electricity": {
+    "Purchased Electricity": {
+      "Units Consumed": {
+        units: ["kWh"]
       }
     }
-  };
+  },
+  "Renewable Electricity": {
+    "Wind Energy": {
+      "Units Consumed Renewable": {
+        units: ["kWh"]
+      }
+    },
+    "Solar Energy": {
+      "Units Consumed Renewable": {
+        units: ["kWh"]
+      }
+    },
+    "Purchased Renewables": {
+      "Units Consumed Renewable": {
+        units: ["kWh"]
+      }
+    }
+  }
+};
 
 
 
