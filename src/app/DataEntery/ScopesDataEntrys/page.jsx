@@ -5,10 +5,12 @@ import { Button, message, Steps, theme, Card, Layout } from 'antd';
 import ParametersAndUnits from '../../(Scopes)/ScopeOne/Activities/parameterAndUnit/page';
 import ParameterUnitForScopeTwo from '../../(Scopes)/Scopetwo/Activities/ParametersUnitForScopeTwo';
 import { useRouter } from 'next/navigation';
+import { useScopeOne } from '../../(Scopes)/ScopeOne/Context/ScopeOneContext';
 
 const { Content } = Layout;
 
 export default function ScopeDataEntry() {
+  const { payload , payloadTwo  } = useScopeOne();
   const [messageApi, messageContextHolder] = message.useMessage();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -64,6 +66,35 @@ export default function ScopeDataEntry() {
       }
   
       messageApi.success("Data saved successfully");
+
+
+try {
+  const response = await fetch("http://127.0.0.1:5000/getAllentriesByidpost", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      scope1: payload,
+      scope2: payloadTwo,
+      allentries_id: template_id[0] // Use first value of array
+    }),
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    console.log("Data successfully sent to ScopeEntry:", data);
+  } else {
+    const errData = await response.json();
+    console.error("Failed to insert:", errData);
+  }
+} catch (error) {
+  console.error("Error in POST request:", error);
+}
+
+
+
+
       router.push("/ViewandEditData");
   
     } catch (error) {

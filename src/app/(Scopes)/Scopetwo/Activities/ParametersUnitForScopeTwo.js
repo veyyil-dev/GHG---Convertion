@@ -6,11 +6,16 @@ import { Input, Select, Button, message, notification, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import { useScopeTwo } from "../Context/ScopeTwoContext";
+import { useScopeOne } from "../../ScopeOne/Context/ScopeOneContext";
+
 
 const { Option } = Select;
 
 export default function ParameterUnitForScopeTwo() {
   const { selectedValuesScopeTwo } = useScopeTwo();
+  const {payload,payloadTwo,setPayloadTwo} = useScopeOne();
+
+
   const [selectedFuels, setSelectedFuels] = useState({});
 //   const [scopeTwoTotal, setScopeTwoTotal] = useState(0);
   const [parameters, setParameters] = useState({});
@@ -35,7 +40,7 @@ export default function ParameterUnitForScopeTwo() {
           try {
             dataObject = JSON.parse(existingData);
             // Ensure dataObject is an object
-            if (typeof dataObject !== 'object' || dataObject === null) {
+            if (typeof dataObject !== 'object' || dataObject === null) {  
               dataObject = {};
             }
           } catch (parseError) {
@@ -152,6 +157,8 @@ export default function ParameterUnitForScopeTwo() {
     }
   
     console.log("Payload to be sent:", payload); // Check the transformed payload
+
+    setPayloadTwo(payload);
   
     try {
       const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/DataEntery/Scope1", {

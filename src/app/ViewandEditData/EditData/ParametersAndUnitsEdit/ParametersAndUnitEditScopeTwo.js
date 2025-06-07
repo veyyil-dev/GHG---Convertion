@@ -1,68 +1,70 @@
 "use client";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
-import { Input, Select, Button, message, notification, Spin } from "antd";
+import { Input, Select, notification, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
-
 
 const { Option } = Select;
 
 export default function ParameterUnitForScopeTwoEditScopeTwo() {
   const [selectedFuels, setSelectedFuels] = useState({});
+  const [scopeData, setScopeData] = useState({});
   const [parameters, setParameters] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [api, contextHolder] = notification.useNotification();
 
-  console.log("Selected Fuels:", selectedFuels);
-  //  console.log("Scope Two Total:", scopeTwoTotal);
-
+  // Save scopeTwo total data to localStorage
   const TotalDateEntryLocal = (scopeTwoTotal) => {
-    console.log("scopeTwoTotal", scopeTwoTotal)
-    if (typeof window !== "undefined") {
-      try {
-        // Get existing data from localStorage
-        const existingData = localStorage.getItem("ParameterandUnits");
-        let dataObject = {};
+    if (typeof window === "undefined") return;
 
-        // Parse existing data if it exists
-        if (existingData) {
-          try {
-            dataObject = JSON.parse(existingData);
-            // Ensure dataObject is an object
-            if (typeof dataObject !== 'object' || dataObject === null) {
-              dataObject = {};
-            }
-          } catch (parseError) {
-            console.error("Error parsing localStorage data:", parseError);
-            dataObject = {}; // Reset to empty object if parsing fails
-          }
-        }
+    try {
+      const existingData = localStorage.getItem("ParameterandUnits");
+      let dataObject = existingData ? JSON.parse(existingData) : {};
 
-        // Add the new scopeTwoTotal to the object with key "scopeTwo"
-        if (scopeTwoTotal) {
-          // Always update the scopeTwo value to ensure consistency
-          dataObject[`scopeTwo`] = scopeTwoTotal;
-
-          // Save the updated object back to localStorage
-          localStorage.setItem("ParameterandUnits", JSON.stringify(dataObject));
-          console.log("Scope Two data updated in localStorage:", dataObject);
-        }
-      } catch (error) {
-        console.error("Error saving to localStorage:", error);
+      if (typeof dataObject !== "object" || dataObject === null) {
+        dataObject = {};
       }
+
+      if (scopeTwoTotal) {
+        dataObject.scopeTwo = scopeTwoTotal;
+        localStorage.setItem("ParameterandUnits", JSON.stringify(dataObject));
+        console.log("Scope Two data updated in localStorage:", dataObject);
+      }
+    } catch (error) {
+      console.error("Error saving to localStorage:", error);
     }
   };
 
-  // Fetch parameters from the backend
+  // Fetch scope data on mount
+  useEffect(() => {
+    const allentries_id = localStorage.getItem("template_id");
+    if (!allentries_id) return;
+
+    const fetchScopeData = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/getAllentriesByidGet?allentries_id=${allentries_id}`);
+        if (!response.ok) throw new Error("Failed to fetch data");
+        const data = await response.json();
+        setScopeData(data);
+      } catch (err) {
+        console.error("Error fetching scope data:", err);
+      }
+    };
+
+    fetchScopeData();
+  }, []);
+
+  // Fetch parameters on mount
   useEffect(() => {
     const fetchParameters = async () => {
       setIsLoading(true);
       try {
-
         const response = await fetch(
-          `https://ghg-conversion-factors-backend.vercel.app/getTempnameToEditing/ForEdit?template_id=${localStorage.getItem("template_id")}`,
+          `https://ghg-conversion-factors-backend.vercel.app/getTempnameToEditing/ForEdit?template_id=${localStorage.getItem(
+            "template_id"
+          )}`,
           { method: "GET" }
         );
 
@@ -70,24 +72,21 @@ export default function ParameterUnitForScopeTwoEditScopeTwo() {
 
         const data = await response.json();
         console.log("Fetched Parameters:", data);
-        setSelectedFuels(data[1]);
+
+        // Assuming data is [parameters, selectedFuels] based on your original usage
+        setParameters(data[0] || {});
+        setSelectedFuels(data[1] || {});
       } catch (error) {
         console.error("Error fetching parameters:", error);
-        // Fallback to dummy data if API fails
       } finally {
         setIsLoading(false);
       }
     };
 
-
     fetchParameters();
-
-    setIsLoading(false);
-
   }, []);
 
-
-
+  // Handle input/select changes
   const handleChange = (category, item, parameter, field, value) => {
     setSelectedFuels((prev) => ({
       ...prev,
@@ -104,84 +103,76 @@ export default function ParameterUnitForScopeTwoEditScopeTwo() {
     }));
   };
 
+  // Send data on change
   const DataEnteryScope2 = async () => {
-    // Extract only parameter, maxValue, and selectedValue
     const payload = [];
 
     if (selectedFuels) {
       Object.keys(selectedFuels).forEach((category) => {
-        if (selectedFuels[category]) {
-          Object.keys(selectedFuels[category]).forEach((item) => {
-            if (selectedFuels[category][item]) {
-              Object.keys(selectedFuels[category][item]).forEach((parameter) => {
-                const paramData = selectedFuels[category][item][parameter];
-
-                if (paramData && paramData.checked) {
-                  payload.push({
-                    parameter: parameter,                                     // Parameter name
-                    maxValue: paramData.maxValue || "",                        // Max value
-                    selectedValue: paramData.selectedValue || ""             // Selected unit
-                  });
-                }
+        Object.keys(selectedFuels[category] || {}).forEach((item) => {
+          Object.keys(selectedFuels[category][item] || {}).forEach((parameter) => {
+            const paramData = selectedFuels[category][item][parameter];
+            if (paramData?.checked) {
+              payload.push({
+                parameter,
+                maxValue: paramData.maxValue || "",
+                selectedValue: paramData.selectedValue || "",
               });
             }
           });
-        }
+        });
       });
     }
 
-    console.log("Payload to be sent:", payload); // Check the transformed payload
+    console.log("Payload to be sent:", payload);
 
     try {
       const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/DataEntery/Scope1", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
       if (response.ok) {
         const data = await response.json();
         console.log("Data successfully sent:", data);
-
-        // Set the scope two total from the response
-        console.log("Scope Two Total:", data.ScopeOneTotal);
-        TotalDateEntryLocal(data.ScopeOneTotal);
-
-        // api.success({
-        //   message: "Success",
-        //   description: data.message,
-        //   placement: "topLeft"
-        // });
+        if (data.ScopeOneTotal) {
+          TotalDateEntryLocal(data.ScopeOneTotal);
+        }
       } else {
         console.error("Failed to send data:", response.status);
-        // api.error({
-        //   message: "Error",
-        //   description: "Failed to save data. Please try again.",
-        //   placement: "topLeft"
-        // });
       }
     } catch (error) {
       console.error("Error in POST request:", error);
-      // api.error({
-      //   message: "Error",
-      //   description: "An error occurred while saving data.",
-      //   placement: "topLeft"
-      // });
     }
   };
 
-  // Create custom spinner icon
-  const antIcon = (
-    <LoadingOutlined
-      style={{
-        fontSize: 40,
-        color: '#27A376'
-      }}
-      spin
-    />
-  );
+  // Sync scope2 values into selectedFuels
+useEffect(() => {
+  if (!scopeData.scope2 || !Object.keys(selectedFuels).length) return;
+
+  const updatedFuels = JSON.parse(JSON.stringify(selectedFuels)); // deep clone
+
+  scopeData.scope2.forEach(({ parameter, maxValue, selectedValue }) => {
+    for (const category in updatedFuels) {
+      for (const item in updatedFuels[category]) {
+        if (updatedFuels[category][item][parameter]) {
+          updatedFuels[category][item][parameter].maxValue = maxValue;
+          updatedFuels[category][item][parameter].selectedValue = selectedValue;
+        }
+      }
+    }
+  });
+
+  // Only update if different
+  if (JSON.stringify(updatedFuels) !== JSON.stringify(selectedFuels)) {
+    setSelectedFuels(updatedFuels);
+  }
+}, [scopeData.scope2, selectedFuels]);
+
+
+
+const antIcon = <LoadingOutlined style={{ fontSize: 40, color: "#27A376" }} spin />;
 
   if (isLoading) {
     return (
@@ -202,85 +193,100 @@ export default function ParameterUnitForScopeTwoEditScopeTwo() {
         </div>
 
         <div className="w-full flex-grow min-h-[250px] text-[22px] overflow-auto">
-          {selectedFuels && Object.keys(selectedFuels).map((category) => (
-            <Disclosure key={category} defaultOpen>
-              {({ open }) => (
-                <div className="bg-[#BFF1DF] w-full mt-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                  <Disclosure.Button className="flex justify-between items-center w-full px-4 py-3 text-lg font-medium text-gray-700 focus:outline-none">
-                    <span>{category}</span>
-                    <ChevronDown className={`w-5 h-5 transition-transform ${open ? "rotate-180" : "rotate-0"}`} />
-                  </Disclosure.Button>
+          {selectedFuels &&
+            Object.keys(selectedFuels).map((category) => (
+              <Disclosure key={category} defaultOpen>
+                {({ open }) => (
+                  <div className="bg-[#BFF1DF] w-full mt-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                    <Disclosure.Button className="flex justify-between items-center w-full px-4 py-3 text-lg font-medium text-gray-700 focus:outline-none">
+                      <span>{category}</span>
+                      <ChevronDown
+                        className={`w-5 h-5 transition-transform ${open ? "rotate-180" : "rotate-0"}`}
+                      />
+                    </Disclosure.Button>
 
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
-                    transition={{ duration: 0.4, ease: "easeInOut" }}
-                    className="overflow-hidden"
-                  >
-                    <Disclosure.Panel className="p-4 w-full bg-[#effbf7] rounded-b-lg">
-                      {selectedFuels[category] && Object.keys(selectedFuels[category]).map((item) => (
-                        <div key={item} className="bg-[#effbf7] p-3 rounded-lg shadow-sm mb-3">
-                          <div className="text-base font-medium text-gray-700 mb-2">{item}</div>
-                          <div className="space-y-3">
-                            {selectedFuels[category][item] && Object.keys(selectedFuels[category][item])
-                              .filter((parameter) => selectedFuels[category][item][parameter]?.checked)
-                              .map((parameter) => {
-                                const units = parameters[category]?.[item]?.[parameter]?.units || [];
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
+                      transition={{ duration: 0.4, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <Disclosure.Panel className="p-4 w-full bg-[#effbf7] rounded-b-lg">
+                        {selectedFuels[category] &&
+                          Object.keys(selectedFuels[category]).map((item) => (
+                            <div key={item} className="bg-[#effbf7] p-3 rounded-lg shadow-sm mb-3">
+                              <div className="text-base font-medium text-gray-700 mb-2">{item}</div>
+                              <div className="space-y-3">
+                                {Object.keys(selectedFuels[category][item])
+                                  .filter(
+                                    (parameter) => selectedFuels[category][item][parameter]?.checked
+                                  )
+                                  .map((parameter) => {
+                                    const units =
+                                      parameters?.[category]?.[item]?.[parameter]?.units || [];
 
-                                return (
-                                  <div key={parameter} className="bg-[#CBF4E5] p-3 rounded-md">
-                                    <div className="text-sm font-medium text-gray-700 mb-2">{parameter}</div>
-                                    <div className="flex flex-col sm:flex-row items-center gap-4">
-                                      {/* Max Value Input */}
-                                      <Input required={true}
-                                        placeholder="Enter max value"
-                                        className="w-full sm:w-[344px] border-emerald-400"
-                                        value={selectedFuels[category]?.[item]?.[parameter]?.maxValue || ""}
-                                        onChange={(e) =>
-                                          handleChange(category, item, parameter, "maxValue", e.target.value)
-                                        }
-                                        onBlur={DataEnteryScope2}
-                                      />
-
-                                      {/* Unit Selection */}
-                                      <Select
-                                        className="w-full sm:w-[410px] border-black"
-                                        placeholder="Select unit"
-                                        value={selectedFuels[category]?.[item]?.[parameter]?.selectedValue || undefined}
-                                        onChange={(unit) =>
-                                          handleChange(category, item, parameter, "selectedValue", unit)
-                                        }
-                                        onBlur={DataEnteryScope2}
-                                      >
-                                        {units.map((unit) => (
-                                          <Option key={unit} value={unit}>
-                                            {unit}
-                                          </Option>
-                                        ))}
-                                      </Select>
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                          </div>
-                        </div>
-                      ))}
-                    </Disclosure.Panel>
-                  </motion.div>
-                </div>
-              )}
-            </Disclosure>
-          ))}
+                                    return (
+                                      <div key={parameter} className="bg-[#CBF4E5] p-3 rounded-md">
+                                        <div className="text-sm font-medium text-gray-700 mb-2">
+                                          {parameter}
+                                        </div>
+                                        <div className="flex flex-col sm:flex-row items-center gap-4">
+                                          <Input
+                                            required
+                                            placeholder="Enter max value"
+                                            className="w-full sm:w-[344px] border-emerald-400"
+                                            value={
+                                              selectedFuels[category][item][parameter].maxValue || ""
+                                            }
+                                            onChange={(e) =>
+                                              handleChange(
+                                                category,
+                                                item,
+                                                parameter,
+                                                "maxValue",
+                                                e.target.value
+                                              )
+                                            }
+                                            onBlur={DataEnteryScope2}
+                                          />
+                                          <Select
+                                            className="w-full sm:w-[410px] border-black"
+                                            placeholder="Select unit"
+                                            value={
+                                              selectedFuels[category][item][parameter].selectedValue ||
+                                              undefined
+                                            }
+                                            onChange={(unit) =>
+                                              handleChange(
+                                                category,
+                                                item,
+                                                parameter,
+                                                "selectedValue",
+                                                unit
+                                              )
+                                            }
+                                            onBlur={DataEnteryScope2}
+                                          >
+                                            {units.map((unit) => (
+                                              <Option key={unit} value={unit}>
+                                                {unit}
+                                              </Option>
+                                            ))}
+                                          </Select>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                              </div>
+                            </div>
+                          ))}
+                      </Disclosure.Panel>
+                    </motion.div>
+                  </div>
+                )}
+              </Disclosure>
+            ))}
         </div>
-
-        {/* <div className="w-full flex justify-center mt-auto pt-6">
-        <Button
-          onClick={DataEnteryScope2}
-          className="bg-[#91e6c7] text-black font-semibold text-lg py-2 px-6 rounded-lg shadow-md hover:bg-green-600 hover:text-white transition-all duration-300"
-        >
-          Enter Data
-        </Button>
-        </div> */}
       </div>
     </>
   );

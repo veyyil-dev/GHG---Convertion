@@ -8,10 +8,11 @@ export function ScopeTwoProvider({ children }) {
   const [selectedValuesScopeTwo, setSelectedValuesScopeTwo] = useState({
     "UK Electricity": ["Electricity generated"]
   });
+   const [payloadScopeTwo, setPayloadScopeTwo] = useState({});
 
   return (
     <ScopeTwoContext.Provider
-      value={{ checkedValuesScopeTwo, setCheckedValuesScopeTwo, selectedValuesScopeTwo, setSelectedValuesScopeTwo }}
+      value={{ checkedValuesScopeTwo, setCheckedValuesScopeTwo, selectedValuesScopeTwo, setSelectedValuesScopeTwo ,payloadScopeTwo, setPayloadScopeTwo}}
     >
       {children}
     </ScopeTwoContext.Provider>

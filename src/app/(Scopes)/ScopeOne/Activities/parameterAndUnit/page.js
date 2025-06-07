@@ -10,7 +10,7 @@ import { useScopeOne } from "../../Context/ScopeOneContext";
 const { Option } = Select;
 
 export default function ParametersAndUnits() {
-  const { selectedFuels, setSelectedFuels, setScopeOneTotal, } = useScopeOne();
+  const { selectedFuels, setSelectedFuels, setScopeOneTotal, setPayload } = useScopeOne();
   const [biogas, setBiogas] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [api, contextHolder] = notification.useNotification();
@@ -65,6 +65,7 @@ export default function ParametersAndUnits() {
   const dataEntryScope1 = async () => {
     // ✅ Extracting only parameter, maxValue, and selectedValue
     const payload = [];
+    console.log("seleced fuels",payload)
   
     Object.keys(selectedFuels).forEach((category) => {
       Object.keys(selectedFuels[category]).forEach((item) => {
@@ -84,6 +85,27 @@ export default function ParametersAndUnits() {
 
 
     console.log("Payload to be sent:", payload); // Check the transformed payload
+
+    setPayload(payload); // Update the context with the payload
+
+//     try {
+//       const response = await fetch("http://127.0.0.1:5000/getAllentriesByidpost", {
+//   method: "POST",
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+//   body: JSON.stringify({ payload }), // ✅ This stays the same
+// });
+//       if (response.ok) {
+//         const data = await response.json();
+//         console.log("Data successfully sent:", data);
+//       }
+        
+//     }catch (error) {
+//       console.error("Error in POST request:", error);
+//     }
+
+
   
     try {
       const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/DataEntery/Scope1", {
@@ -276,14 +298,7 @@ export default function ParametersAndUnits() {
           ))}
         </div>
 
-        {/* <div className="w-full flex justify-center mt-auto pt-6">
-          <Button
-            onClick={DataEnteryScope1}
-            className="bg-[#91e6c7] text-black font-semibold text-lg py-2 px-6 rounded-lg shadow-md hover:bg-green-600 hover:text-white transition-all duration-300"
-          >
-            Enter Data
-          </Button>
-        </div> */}
+     
       </div>
     </>
   );

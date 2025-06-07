@@ -19,6 +19,8 @@ export default function ParametersAndUnitsEdit() {
   const [isLoading, setIsLoading] = useState(true);
   const [api, contextHolder] = notification.useNotification();
   const router = useRouter();
+  const [scopeData, setScopeData] = useState([]);
+  console.log("scopeDataFetch", scopeData);
 
   // console.log("scopeOneTotal", scopeOneTotal)
   console.log("Selected Fuels:", selectedFuels);
@@ -144,6 +146,52 @@ export default function ParametersAndUnitsEdit() {
 
     fetchBiogasData();
   }, []);
+
+useEffect(() => {
+  if (!scopeData.scope1 || !Object.keys(selectedFuels).length) return;
+
+  const updatedFuels = JSON.parse(JSON.stringify(selectedFuels)); // deep clone
+
+  scopeData.scope1.forEach(({ parameter, maxValue, selectedValue }) => {
+    for (const category in updatedFuels) {
+      for (const item in updatedFuels[category]) {
+        if (updatedFuels[category][item][parameter]) {
+          updatedFuels[category][item][parameter].maxValue = maxValue;
+          updatedFuels[category][item][parameter].selectedValue = selectedValue;
+        }
+      }
+    }
+  });
+
+  setSelectedFuels(updatedFuels);
+}, [scopeData, selectedFuels]);
+
+
+
+
+useEffect(() => {
+  const allentries_id = localStorage.getItem("template_id");
+  if (!allentries_id) return;
+
+  const fetchScopeData = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/getAllentriesByidGet?allentries_id=${allentries_id}`);
+      if (!response.ok) throw new Error("Failed to fetch data");
+      const data = await response.json();
+      setScopeData(data); // ← this function is missing (see fix below)
+    } catch (err) {
+      console.error("Error fetching scope data:", err);
+    }
+  };
+
+  fetchScopeData();
+}, []); // ✅ Empty dependency: run once on mount
+
+
+
+
+
+
 
   useEffect(() => {
     const templateSave = async () => {

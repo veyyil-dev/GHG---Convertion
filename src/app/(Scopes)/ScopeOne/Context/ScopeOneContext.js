@@ -26,6 +26,9 @@ export function ScopeOneProvider({ children }) {
     const [scopeOneTotal, setScopeOneTotal] = useState(null);
     // const [templatecontent, setTemplatecontent] = useState([]);
     const [getTemplate, setGetTemplate] = useState([]);
+    const [payload, setPayload] = useState({});
+    const [payloadTwo, setPayloadTwo] = useState({});
+      const [scopeData, setScopeData] = useState([]);
 
     console.log("getTemplate",getTemplate)
 
@@ -84,7 +87,7 @@ export function ScopeOneProvider({ children }) {
             value={{
                 userId, setUserId, allEntries, setAllEntries,data, setData,user_Id, setUser_Id,
                 scopeOneTotal, setScopeOneTotal,
-                templatecontent, settemplatecontent,
+                templatecontent, settemplatecontent,scopeData, setScopeData,
                 selectedShift, setSelectedShift,
                 checkedValuesScopeOne,
                 pageChange, setPageChange,
@@ -99,9 +102,7 @@ export function ScopeOneProvider({ children }) {
                 fetchedParameters,
                 setFetchedParameters,
                 editTemplate, setEditTemplate, fetchedCheckedValues, setFetchedCheckedValues,getToken,
-                username
-
-
+                username,payload, setPayload, payloadTwo, setPayloadTwo
             }}>
             {children}
 
