@@ -21,7 +21,7 @@ const useDashboardData = () => {
 
     setIsLoading(true);
     try {
-      const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/api/DashBoardData?userId=${userId}`, {
+      const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/api/DashBoardData`, {
         method: "GET",
       });
       if (!response.ok) {
