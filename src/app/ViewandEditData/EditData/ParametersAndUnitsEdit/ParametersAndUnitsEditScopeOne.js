@@ -175,7 +175,7 @@ useEffect(() => {
 
   const fetchScopeData = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/getAllentriesByidGet?allentries_id=${allentries_id}`);
+      const response = await fetch(`https://ghg-conversion-factors-backend.vercel.app/getAllentriesByidGet?allentries_id=${allentries_id}`);
       if (!response.ok) throw new Error("Failed to fetch data");
       const data = await response.json();
       setScopeData(data); // ← this function is missing (see fix below)

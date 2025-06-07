@@ -31,7 +31,7 @@ export default function ScopeOneFactors() {
 
   // Fetch Scope Factors
   const fetchFactors = async () => {
-    // http://127.0.0.1:5000/api/scope1/scope_factors
+    // https://ghg-conversion-factors-backend.vercel.app/api/scope1/scope_factors
     try {
       const response = await fetch(
         "https://ghg-conversion-factors-backend.vercel.app/scope_factors"

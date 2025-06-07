@@ -89,7 +89,7 @@ export default function ParametersAndUnits() {
     setPayload(payload); // Update the context with the payload
 
 //     try {
-//       const response = await fetch("http://127.0.0.1:5000/getAllentriesByidpost", {
+//       const response = await fetch("https://ghg-conversion-factors-backend.vercel.app/getAllentriesByidpost", {
 //   method: "POST",
 //   headers: {
 //     "Content-Type": "application/json",
